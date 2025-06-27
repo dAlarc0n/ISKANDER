@@ -37,8 +37,10 @@ Una plataforma LMS (Learning Management System) desarrollada con:
 ```bash
 git clone https://github.com/dAlarc0n/ISKANDER.git
 cd ISKANDER
-
-2. Configurar y levantar el backend (Laravel)
+```
+---
+### 2. Configurar y levantar el backend (Laravel)
+```bash
 cd iskander-backend
 cp .env.example .env
 composer install
@@ -46,18 +48,20 @@ php artisan key:generate
 php artisan migrate
 
 php artisan serve
-
 📍 El backend estará disponible en: http://127.0.0.1:8000
+```
 
-3. Configurar y levantar el frontend (RemixJS)
+### 3. Configurar y levantar el frontend (RemixJS)
+```bash
 cd ../iskander-app
 npm install
 npm run dev
 
 📍 El frontend estará disponible en: http://localhost:3000
+```
 
-⚙️ Variables de entorno
-
+### ⚙️ Variables de entorno
+```bash
 APP_NAME=Iskander
 APP_URL=http://localhost:8000
 DB_CONNECTION=mysql
@@ -69,14 +73,15 @@ DB_PASSWORD=
 
 SANCTUM_STATEFUL_DOMAINS=localhost:3000
 SESSION_DOMAIN=localhost
-
-🟢 Frontend (iskander-app/.env)
-
+```
+### 🟢 Frontend (iskander-app/.env)
+```bash 
 API_ROUTE=http://localhost
 PORT=8000
 SESSION_SECRET=AAAAAAAAAAAAAAAAAAAAAAAAAAA
+```
 
-🔐 Autenticación y gestión de usuarios
+### 🔐 Autenticación y gestión de usuarios
 La autenticación está implementada con Laravel Sanctum.
 
 Accesos:
@@ -91,26 +96,19 @@ Admin	Acceso total, creación y modificación de contenido
 Profesor	Visualiza todo y puede modificar sus propios cursos
 Usuario	Solo puede acceder y visualizar contenido disponible
 
-🧰 Herramientas utilizadas
-Frontend (iskander-app)
-RemixJS
+### 🧰 Herramientas utilizadas
+## Frontend (iskander-app)
+- RemixJS
+- Tailwind CSS
+- shadcn/ui
+- Axios
+- Sonner (para notificaciones toast)
+## Backend (iskander-backend)
+- Laravel 12
+- Sanctum para autenticación API
+- MySQL como base de datos
 
-Tailwind CSS
-
-shadcn/ui
-
-Axios
-
-Sonner (para notificaciones toast)
-
-Backend (iskander-backend)
-Laravel 12
-
-Sanctum para autenticación API
-
-MySQL como base de datos
-
-🌱 Flujo de trabajo
+### 🌱 Flujo de trabajo
 Convención de ramas
 prod: rama principal de producción
 
@@ -118,15 +116,15 @@ Para nuevas funcionalidades:
 
 feature/nombre-de-la-feature
 
-📤 Deploy
+## 📤 Deploy
 Este proyecto está pensado para ser desplegado en un servidor VPS que tenga instalado:
 
-PHP 8.2
+- PHP 8.2
 
-MySQL
+- MySQL
 
-Node.js 20
+- Node.js 20
 
-Nginx o Apache
+- Nginx o Apache
 
 Se recomienda servir el backend (iskander-backend) con Laravel (artisan o Forge) y el frontend (iskander-app) como aplicación independiente (mediante pm2, nginx o reverse proxy a Vite server, según tu preferencia).
