@@ -10,7 +10,9 @@ Una plataforma LMS (Learning Management System) desarrollada con:
 ## 📁 Estructura del proyecto
 
 ├── iskander-app/ # Frontend - RemixJS
+
 ├── iskander-backend/ # Backend - Laravel
+
 └── README.md
 
 
@@ -60,7 +62,7 @@ npm run dev
 📍 El frontend estará disponible en: http://localhost:3000
 ```
 
-### ⚙️ Variables de entorno
+## ⚙️ Variables de entorno
 ```bash
 APP_NAME=Iskander
 APP_URL=http://localhost:8000
@@ -74,14 +76,14 @@ DB_PASSWORD=
 SANCTUM_STATEFUL_DOMAINS=localhost:3000
 SESSION_DOMAIN=localhost
 ```
-### 🟢 Frontend (iskander-app/.env)
+## 🟢 Frontend (iskander-app/.env)
 ```bash 
 API_ROUTE=http://localhost
 PORT=8000
 SESSION_SECRET=AAAAAAAAAAAAAAAAAAAAAAAAAAA
 ```
 
-### 🔐 Autenticación y gestión de usuarios
+## 🔐 Autenticación y gestión de usuarios
 La autenticación está implementada con Laravel Sanctum.
 
 Accesos:
@@ -92,23 +94,23 @@ Todas las demás rutas están protegidas por middleware.
 El acceso se gestiona según el tipo de usuario:
 
 Rol	Acceso
-Admin	Acceso total, creación y modificación de contenido
-Profesor	Visualiza todo y puede modificar sus propios cursos
-Usuario	Solo puede acceder y visualizar contenido disponible
+- Admin:	Acceso total, creación y modificación de contenido.
+- Profesor:	Visualiza todo sobre los cursos matriculados y puede modificar sus propios cursos.
+- Usuario:	Solo puede acceder y visualizar contenido disponible en los cursos matriculados.
 
-### 🧰 Herramientas utilizadas
-## Frontend (iskander-app)
+## 🧰 Herramientas utilizadas
+### Frontend (iskander-app)
 - RemixJS
 - Tailwind CSS
 - shadcn/ui
 - Axios
 - Sonner (para notificaciones toast)
-## Backend (iskander-backend)
+### Backend (iskander-backend)
 - Laravel 12
 - Sanctum para autenticación API
 - MySQL como base de datos
 
-### 🌱 Flujo de trabajo
+## 🌱 Flujo de trabajo
 Convención de ramas
 prod: rama principal de producción
 
@@ -117,14 +119,5 @@ Para nuevas funcionalidades:
 feature/nombre-de-la-feature
 
 ## 📤 Deploy
-Este proyecto está pensado para ser desplegado en un servidor VPS que tenga instalado:
-
-- PHP 8.2
-
-- MySQL
-
-- Node.js 20
-
-- Nginx o Apache
-
-Se recomienda servir el backend (iskander-backend) con Laravel (artisan o Forge) y el frontend (iskander-app) como aplicación independiente (mediante pm2, nginx o reverse proxy a Vite server, según tu preferencia).
+- Este proyecto está pensado para ser desplegado en un servidor VPS.
+- Se recomienda servir el backend (iskander-backend) con Laravel (artisan o Forge) y el frontend (iskander-app) como aplicación independiente (mediante pm2, nginx o reverse proxy a Vite server, según tu preferencia).
