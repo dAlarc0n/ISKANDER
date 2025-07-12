@@ -11,6 +11,7 @@ use App\Models\CourseParticipant;
 use App\Models\Status;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 class CourseController extends Controller
@@ -68,7 +69,14 @@ class CourseController extends Controller
         ]);
     }
     public function index(){
-        $courses = Course::all()->map(function($item){
+        $user=Auth::user();
+        if($user->id===1){
+            $course = Course::all();
+        }else{
+            $course = Course::where('teacher_id',$user->id)->orWhereIn('id', CourseParticipant::where('user_id', $user->id)->pluck('course_id'))->get();
+
+        }
+        $courses = $course->map(function($item){
             return [
                 'id'=>$item->id,
                 'title'=>$item->title,
@@ -87,6 +95,8 @@ class CourseController extends Controller
     public function show($id)
     {
         $course = Course::find($id);
+        $rol = Auth::user()->id === 1 ? true : ($course->teacher_id ==Auth::user()->id  ? true : false);
+
         return response()->json([
             'data'=>
             [
@@ -94,6 +104,7 @@ class CourseController extends Controller
                 'title'=>$course->title,
                 'description'=>$course->description,
                 'instructor'=> User::find($course->teacher_id)->name,
+                'rol'=>$rol,
                 'category'=> Category::find($course->category_id)->description,
                 'enrolledStudents'=> count(CourseParticipant::where('status_id',1)->where('course_id',$course->id)->get()),
                 'createdDate' => Carbon::parse($course->created_at)->format('d/m/Y'),

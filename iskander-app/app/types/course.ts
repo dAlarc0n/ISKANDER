@@ -3,6 +3,7 @@ export interface Course {
   title: string
   description: string
   instructor: string
+  rol:boolean;
   category: string
   enrolledStudents: number
   createdDate: string

@@ -19,7 +19,7 @@ import type { User, CreateUserData } from "~/types/user"
 import { useFetcher,useLoaderData } from "@remix-run/react"
 import Swal from "sweetalert2"
 import type {LoaderFunction } from "@remix-run/node";
-import {users} from "~/services/auth.server"
+import {users, requireAdmin} from "~/services/auth.server"
 
 interface FetcherResponse {
   status: number;
@@ -31,7 +31,7 @@ interface LoaderData {
   user: User[];
 }
 export const loader: LoaderFunction = async ({ request }) => {
-  
+  await requireAdmin({request})
   const userList = await users({request})
   const elements = {
     user: userList.data,

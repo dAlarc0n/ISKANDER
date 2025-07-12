@@ -1,4 +1,3 @@
- import { authenticator, users } from "~/services/auth.server";
 import { useEffect, useState } from "react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
@@ -41,25 +40,6 @@ interface LoaderData {
   courseDetails:CourseDetail,
   users:User[]
 }
-
-
-
-  
-
-const Admin = 1;
-const isAdmin =Admin===1;// actual === Admin;
-//const isAdmin = user.Id === 1; 
-
-const Instructor = 2; //evaluar con consulta el id
-const isInstructor = Instructor===2;///evaluar con los instructores
-//const isInstructor = course.instructor === currentUser.name;
-
-
-
-
-  const isAcess = isAdmin || isInstructor;
-//const isAcess = Admin === isAdmin || Teacher === isInstructor;
-
 // const mockCourseDetail: CourseDetail = {
 //   id: 1,
 //   title: "React Avanzado",
@@ -442,7 +422,7 @@ export default function CourseDetailPage() {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Contenido del curso</h3>
               
-            {isAcess &&(
+            {course.rol &&(
               <Button
                 className="bg-purple-600 hover:bg-purple-700"
                 onClick={() => handleAddContent(1)} 
@@ -460,14 +440,6 @@ export default function CourseDetailPage() {
                     <div>
                       <CardTitle className="text-lg">{section.title}</CardTitle>
                       {section.description && <CardDescription>{section.description}</CardDescription>}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm">
-                        {section.isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
                     </div>
                   </div>
                 </CardHeader>
@@ -503,15 +475,12 @@ export default function CourseDetailPage() {
                               <Download className="h-4 w-4" />
                             </Button>
                           )}
-                          <Button variant="ghost" size="sm">
-                            {content.isVisible ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
-                          </Button>
-                          <Button variant="ghost" size="sm">
+                          {course.rol && (<Button variant="ghost" size="sm">
                             <Edit className="h-4 w-4" />
-                          </Button>
-                          <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                          </Button>)}
+                          {course.rol && (<Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
                             <Trash2 className="h-4 w-4" />
-                          </Button>
+                          </Button>)}
                         </div>
                       </div>
                     ))}
@@ -524,7 +493,7 @@ export default function CourseDetailPage() {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Estudiantes inscritos ({course.students.length})</h3>
 
-             {isAcess &&( 
+             {course.rol &&( 
               <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsAddStudentModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Agregar estudiante
@@ -569,7 +538,7 @@ export default function CourseDetailPage() {
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Calificaciones</h3>
              
-             {isAcess &&(
+             {course.rol &&(
               <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsGradeModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Nueva calificación

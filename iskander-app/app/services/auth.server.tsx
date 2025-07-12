@@ -171,7 +171,6 @@ export async function options({ request }: any) {
 
 export async function requireGuest({ request }: any) {
   if (await user({ request })) {
-    console.log('aqui')
     throw redirect("/dashboard");
   }
 }
@@ -179,6 +178,17 @@ export async function requireGuest({ request }: any) {
 export async function requireAuth({ request }: any) {
   if (!await user({ request })) {
     throw redirect("/login");
+  }
+}
+
+export async function requireAdmin({ request }: any) {
+  if (!await user({ request })) {
+    throw redirect("/admin");
+  }else{
+    const users =  await user({ request })
+    if(users.id !== 1){
+      throw redirect("/dashboard/courses");
+    }
   }
 }
 

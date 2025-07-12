@@ -52,7 +52,7 @@ export function Header({
                       .split(" ")
                       .map((n) => n[0])
                       .join("")
-                      .toUpperCase()}
+                      .toUpperCase()[0]}
                   </AvatarFallback>
                 </Avatar>
               </Button>

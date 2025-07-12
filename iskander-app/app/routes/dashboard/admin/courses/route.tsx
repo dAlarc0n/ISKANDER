@@ -19,7 +19,7 @@ import { Plus, Search, Edit, Trash2, Users, BookOpen, ReceiptText } from "lucide
 import type { Course, CreateCourseData } from "~/types/course"
 import { Link,useFetcher,useLoaderData } from "@remix-run/react"
 import type { LoaderFunction } from "@remix-run/node"
-import {users,categories,courses} from "~/services/auth.server"
+import {user,users,categories,courses} from "~/services/auth.server"
 import { Combobox } from "~/components/ui/combobox"
 import Swal from "sweetalert2"
 interface FetcherResponse {
@@ -38,10 +38,12 @@ interface LoaderData {
     label:string;
   }[];
   course:Course[]
+  userLogIn:any
 }
 export const loader: LoaderFunction = async ({ request }) => {
   
   const userList = await users({request})
+  const userLogIn = await user({request})
   const categoryList = await categories({request})
   const courseList = await courses({request})
   const data = (userList.data || []).map((item: any) => ({
@@ -55,13 +57,14 @@ export const loader: LoaderFunction = async ({ request }) => {
   const elements = {
     user: data,
     category:categoryData,
-    course:courseList.data
+    course:courseList.data,
+    userLogIn:userLogIn
   };
   return elements;
 };
 
 export default function CoursesManagement() {
-  const {user,category,course } = useLoaderData<LoaderData>();
+  const {user,category,course,userLogIn } = useLoaderData<LoaderData>();
   const [courses, setCourses] = useState<Course[]>(course)
   useEffect(()=>{
       setCourses(course)
@@ -153,7 +156,7 @@ export default function CoursesManagement() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Gestión de Cursos</h1>
-            <p className="text-gray-600">Crea y administra el contenido educativo</p>
+            {userLogIn.id === 1 ?<p className="text-gray-600">Crea y administra el contenido educativo</p> :<p className="text-gray-600">Visualiza el listado de cursos a los que perteneces</p> }
           </div>
           <Dialog
             open={isCreateDialogOpen}
@@ -162,12 +165,14 @@ export default function CoursesManagement() {
               if (!open) resetForm()
             }}
           >
+            {userLogIn.id === 1 && (
             <DialogTrigger asChild>
               <Button className="bg-purple-600 hover:bg-purple-700">
                 <Plus className="h-4 w-4 mr-2" />
                 Crear Curso
               </Button>
             </DialogTrigger>
+          )}
             <DialogContent className="w-full max-w-2xl mx-4">
               <DialogHeader>
                 <DialogTitle>Crear nuevo curso</DialogTitle>
@@ -296,23 +301,28 @@ export default function CoursesManagement() {
                       Ver
                     </Button>
                   </Link>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1 text-xs sm:text-sm"
-                    onClick={() => handleEditCourse(course)}
-                  >
-                    <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                    Editar
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700 px-2"
-                    onClick={() => handleDeleteCourse(course.id)}
-                  >
-                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                  </Button>
+                  {userLogIn.id===1 && (
+                    <>
+                      <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 text-xs sm:text-sm"
+                      onClick={() => handleEditCourse(course)}
+                    >
+                      <Edit className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
+                      Editar
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700 px-2"
+                      onClick={() => handleDeleteCourse(course.id)}
+                    >
+                      <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                    </Button>
+                    </>
+                  )}
+                  
                 </div>
               </CardContent>
             </Card>
