@@ -1,3 +1,4 @@
+import { authenticator, users } from "~/services/auth.server";
 import { useEffect, useState } from "react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
@@ -24,6 +25,7 @@ import type { CourseDetail, CourseContent, CourseGrade, CourseStudent } from "~/
 import { AddContentModal } from "~/components/course/add-content-modal"
 import { AddStudentModal } from "~/components/course/add-student-modal"
 import { GradeModal } from "~/components/course/grade-modal"
+import { ForumModal } from "~/components/course/add-forum-modal"
 import type {LoaderFunctionArgs} from "@remix-run/node";
 import  {useFetcher, useLoaderData, useParams} from "@remix-run/react";
 import {courseDetail,courseUser} from '~/services/auth.server'
@@ -39,6 +41,14 @@ interface LoaderData {
   courseDetails:CourseDetail,
   users:User[]
 }
+
+const Admin = 1;
+const isAdmin =1;// actual === Admin;
+
+const Teacher = 4; //evaluar con consulta el id
+const isTeacher =4;///evaluar con los instructores
+const isAcess = Admin === isAdmin || Teacher === isTeacher;
+
 // const mockCourseDetail: CourseDetail = {
 //   id: 1,
 //   title: "React Avanzado",
@@ -206,6 +216,7 @@ interface LoaderData {
 //   ],
 // }
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
+
   const id = params.id;
   const data = await courseDetail({ request, id });
   const element = await courseUser({ request, id });
@@ -224,6 +235,7 @@ export default function CourseDetailPage() {
   const [isAddContentModalOpen, setIsAddContentModalOpen] = useState(false)
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false)
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false)
+  const [isForumModalOpen, setIsForumModalOpen] = useState(false)
   const [selectedSectionId, setSelectedSectionId] = useState<number>(0)
   const [editingGrade, setEditingGrade] = useState<CourseGrade | null>(null)
   useEffect(()=>{
@@ -266,6 +278,7 @@ export default function CourseDetailPage() {
         return "Contenido"
     }
   }
+  
 
   const getGradeColor = (grade: number, maxGrade: number) => {
     const percentage = (grade / maxGrade) * 100
@@ -297,6 +310,26 @@ export default function CourseDetailPage() {
     });
     console.log("Contenido agregado:", content)
   }
+
+ const handleForumAdded = (content: Omit<CourseContent, "id">&{file?:File}) => {
+     const formData = new FormData()
+      formData.append("title", content.title)
+      formData.append("description", content.description ||'')
+      formData.append("type", content.type)
+      formData.append("isVisible", String(content.isVisible))
+      formData.append('id',id || '')
+      if (content.file) {
+        formData.append("file", content.file)
+        
+      }
+        fetcher.submit(formData, {
+          method: "POST",
+          action: `/api/course/content`,
+          encType: "multipart/form-data" 
+        });
+        console.log("Contenido agregado:", content)
+    }
+  
 
   const handleStudentsAdded = (students: CourseStudent[]) => {
     const formData = new FormData();
@@ -392,6 +425,8 @@ export default function CourseDetailPage() {
           <TabsContent value="content" className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Contenido del curso</h3>
+              
+            {isAcess &&(
               <Button
                 className="bg-purple-600 hover:bg-purple-700"
                 onClick={() => handleAddContent(1)} 
@@ -399,6 +434,7 @@ export default function CourseDetailPage() {
                 <Plus className="h-4 w-4 mr-2" />
                 Agregar contenido
               </Button>
+            )}
             </div>
 
             {course.sections.map((section) => (
@@ -430,13 +466,13 @@ export default function CourseDetailPage() {
                           <div className="flex-shrink-0">{getContentIcon(content.type)}</div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
-                              <h4 className="font-medium truncate">{content.title}</h4>
+                              <h4 className="font-medium truncate w-[100px] sm:w-[150px]   md:w-[300px]">{content.title}</h4>
                               <Badge variant="outline" className="text-xs">
                                 {getContentTypeText(content.type)}
                               </Badge>
                             </div>
                             {content.description && (
-                              <p className="text-sm text-gray-600 truncate">{content.description}</p>
+                              <p className="text-sm text-gray-600 truncate w-[0px] sm:w-[250px] md:w-[320px] lg:w-[420px]">{content.description}</p>
                             )}
                             <div className="flex items-center gap-4 text-xs text-gray-500 mt-1">
                               <span>Por {content.author}</span>
@@ -471,10 +507,13 @@ export default function CourseDetailPage() {
           <TabsContent value="students" className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Estudiantes inscritos ({course.students.length})</h3>
+
+             {isAcess &&( 
               <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsAddStudentModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Agregar estudiante
               </Button>
+             )}
             </div>
 
             <Card>
@@ -513,10 +552,13 @@ export default function CourseDetailPage() {
           <TabsContent value="grades" className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Calificaciones</h3>
+             
+             {isAcess &&(
               <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsGradeModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Nueva calificación
               </Button>
+             )}
             </div>
 
             <Card>
@@ -553,10 +595,14 @@ export default function CourseDetailPage() {
           <TabsContent value="forums" className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Foros de discusión</h3>
-              <Button className="bg-purple-600 hover:bg-purple-700">
+              
+              {isAcess &&(
+              <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsForumModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Crear foro
               </Button>
+              )}
+
             </div>
 
             <div className="grid gap-4">
@@ -578,9 +624,12 @@ export default function CourseDetailPage() {
                   </CardContent>
                 </Card>
               ))}
+              
             </div>
           </TabsContent>
         </Tabs>
+
+        
         <AddContentModal
           isOpen={isAddContentModalOpen}
           onClose={() => setIsAddContentModalOpen(false)}
@@ -607,6 +656,14 @@ export default function CourseDetailPage() {
           students={course.students}
           activities={availableActivities}
           editingGrade={editingGrade}
+        />
+
+        <ForumModal
+          isOpen={isForumModalOpen}
+          onClose={() => setIsForumModalOpen(false)}
+          onAdd={handleForumAdded}
+          sectionId={selectedSectionId}
+          sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
         />
       </div>
   )
