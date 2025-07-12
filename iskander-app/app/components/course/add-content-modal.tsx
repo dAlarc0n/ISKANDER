@@ -142,7 +142,7 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
                 required
               />
             </div>
-
+            {formData.type !== "announcement" && (
             <div className="grid gap-2">
               <Label htmlFor="description">Descripción</Label>
               <Textarea
@@ -153,6 +153,7 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
                 rows={3}
               />
             </div>
+          )}
           </div>
 
           {formData.type === "file" && (
