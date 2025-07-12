@@ -161,7 +161,7 @@ class CourseController extends Controller
         DB::beginTransaction();
         try{
             foreach($request->students as $item){
-                $enrollment = CourseParticipant::where('user_id',$item['id'])->first();
+                $enrollment = CourseParticipant::where('user_id',$item['id'])->where('course_id', $course)->first();
                 if(!$enrollment){
                     CourseParticipant::create([
                         'course_id'=>$course,

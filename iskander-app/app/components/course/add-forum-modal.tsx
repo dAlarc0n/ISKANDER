@@ -33,7 +33,7 @@ interface ContentFormData {
   isVisible: boolean
   file?: File
 }
-
+/*
 export function ForumModal({ isOpen, onClose, onAdd, sectionId, sectionTitle }: AddContentModalProps) {
   const [formData, setFormData] = useState<ContentFormData>({
     title: "",
@@ -156,4 +156,4 @@ export function ForumModal({ isOpen, onClose, onAdd, sectionId, sectionTitle }: 
       </DialogContent>
     </Dialog>
   )
-}
+}*/

@@ -1,4 +1,4 @@
-import { authenticator, users } from "~/services/auth.server";
+ import { authenticator, users } from "~/services/auth.server";
 import { useEffect, useState } from "react"
 import { Button } from "~/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
@@ -25,7 +25,7 @@ import type { CourseDetail, CourseContent, CourseGrade, CourseStudent } from "~/
 import { AddContentModal } from "~/components/course/add-content-modal"
 import { AddStudentModal } from "~/components/course/add-student-modal"
 import { GradeModal } from "~/components/course/grade-modal"
-import { ForumModal } from "~/components/course/add-forum-modal"
+//import { ForumModal } from "~/components/course/add-forum-modal"
 import type {LoaderFunctionArgs} from "@remix-run/node";
 import  {useFetcher, useLoaderData, useParams} from "@remix-run/react";
 import {courseDetail,courseUser} from '~/services/auth.server'
@@ -42,12 +42,23 @@ interface LoaderData {
   users:User[]
 }
 
-const Admin = 1;
-const isAdmin =1;// actual === Admin;
 
-const Teacher = 4; //evaluar con consulta el id
-const isTeacher =4;///evaluar con los instructores
-const isAcess = Admin === isAdmin || Teacher === isTeacher;
+
+  
+
+const Admin = 1;
+const isAdmin =Admin===1;// actual === Admin;
+//const isAdmin = user.Id === 1; 
+
+const Instructor = 2; //evaluar con consulta el id
+const isInstructor = Instructor===2;///evaluar con los instructores
+//const isInstructor = course.instructor === currentUser.name;
+
+
+
+
+  const isAcess = isAdmin || isInstructor;
+//const isAcess = Admin === isAdmin || Teacher === isInstructor;
 
 // const mockCourseDetail: CourseDetail = {
 //   id: 1,
@@ -222,7 +233,7 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   const element = await courseUser({ request, id });
   const elements = {
     courseDetails: data.data,
-    users:element.data
+    users:element.data,
   };
   return elements;
 };
@@ -235,7 +246,7 @@ export default function CourseDetailPage() {
   const [isAddContentModalOpen, setIsAddContentModalOpen] = useState(false)
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false)
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false)
-  const [isForumModalOpen, setIsForumModalOpen] = useState(false)
+  // const [isForumModalOpen, setIsForumModalOpen] = useState(false)
   const [selectedSectionId, setSelectedSectionId] = useState<number>(0)
   const [editingGrade, setEditingGrade] = useState<CourseGrade | null>(null)
   useEffect(()=>{
@@ -311,6 +322,8 @@ export default function CourseDetailPage() {
     console.log("Contenido agregado:", content)
   }
 
+/* datos del foro
+
  const handleForumAdded = (content: Omit<CourseContent, "id">&{file?:File}) => {
      const formData = new FormData()
       formData.append("title", content.title)
@@ -329,7 +342,8 @@ export default function CourseDetailPage() {
         });
         console.log("Contenido agregado:", content)
     }
-  
+  */
+
 
   const handleStudentsAdded = (students: CourseStudent[]) => {
     const formData = new FormData();
@@ -415,12 +429,14 @@ export default function CourseDetailPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/*Barra de secciones de un curso*/}
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="content">Contenido</TabsTrigger>
             <TabsTrigger value="students">Estudiantes</TabsTrigger>
             <TabsTrigger value="grades">Calificaciones</TabsTrigger>
-            <TabsTrigger value="forums">Foros</TabsTrigger>
+            {/* Seccion de Foros  <TabsTrigger value="forums">Foros</TabsTrigger> */}
           </TabsList>
           <TabsContent value="content" className="space-y-6">
             <div className="flex items-center justify-between">
@@ -592,6 +608,10 @@ export default function CourseDetailPage() {
               </CardContent>
             </Card>
           </TabsContent>
+
+
+           {/* Lista de foros y boton de agragar
+
           <TabsContent value="forums" className="space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">Foros de discusión</h3>
@@ -627,6 +647,10 @@ export default function CourseDetailPage() {
               
             </div>
           </TabsContent>
+           
+           */}
+
+
         </Tabs>
 
         
@@ -658,13 +682,19 @@ export default function CourseDetailPage() {
           editingGrade={editingGrade}
         />
 
-        <ForumModal
-          isOpen={isForumModalOpen}
-          onClose={() => setIsForumModalOpen(false)}
-          onAdd={handleForumAdded}
-          sectionId={selectedSectionId}
-          sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
-        />
       </div>
+
+
+      /* Abrir modal del Foro
+
+
+        <ForumModal
+            isOpen={isForumModalOpen}
+            onClose={() => setIsForumModalOpen(false)}
+            onAdd={handleForumAdded}
+            sectionId={selectedSectionId}
+            sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
+        /> 
+        */
   )
 }
