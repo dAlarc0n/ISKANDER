@@ -24,13 +24,12 @@ import type { CourseDetail, CourseContent, CourseGrade, CourseStudent } from "~/
 import { AddContentModal } from "~/components/course/add-content-modal"
 import { AddStudentModal } from "~/components/course/add-student-modal"
 import { GradeModal } from "~/components/course/grade-modal"
-
 import { BannerModal } from "~/components/course/add-banner-modal"
-
 import type {LoaderFunctionArgs} from "@remix-run/node";
 import  {useFetcher, useLoaderData, useParams} from "@remix-run/react";
 import {courseDetail,courseUser} from '~/services/auth.server'
 import { User } from "~/types/user"
+import { useNavigate } from "@remix-run/react";
 import Swal from "sweetalert2"
 interface FetcherResponse {
   status: number;
@@ -42,6 +41,7 @@ interface LoaderData {
   courseDetails:CourseDetail,
   users:User[]
 }
+
 // const mockCourseDetail: CourseDetail = {
 //   id: 1,
 //   title: "React Avanzado",
@@ -220,6 +220,11 @@ export const loader = async ({ request, params }: LoaderFunctionArgs) => {
   return elements;
 };
 export default function CourseDetailPage() {
+  const navigate = useNavigate()
+  const handleNavigateCourses = () =>{
+    navigate("/dashboard/courses")
+  }
+
   const fetcher = useFetcher();
   const { id } = useParams();
   const {courseDetails,users} = useLoaderData<LoaderData>();
@@ -382,7 +387,7 @@ export default function CourseDetailPage() {
   return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => {}}>
+          <Button variant="ghost" size="sm" onClick={handleNavigateCourses}>
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
