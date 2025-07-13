@@ -54,4 +54,6 @@ Route::middleware('auth:sanctum')->group( function () {
     Route::post('course/enrollment/{id}',[CourseController::class,'enrollment']);
     Route::post('course/content/{id}',[CourseController::class,'content']);
     Route::post('course/create',[CourseController::class,'store']);
+    Route::post('course/edit/{id}',[CourseController::class,'update']);
+    Route::post('course/delete/{id}',[CourseController::class,'delete']);
 });

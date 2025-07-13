@@ -14,6 +14,7 @@ class CourseContent extends Model
         'title',
         'description',
         'status_id',
+        'type_id',
         'course_id',
         'url'
     ];

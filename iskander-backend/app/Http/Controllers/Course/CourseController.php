@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseContent;
+use App\Models\CourseContentType;
 use App\Models\CourseParticipant;
 use App\Models\Status;
 use App\Models\User;
@@ -71,9 +72,9 @@ class CourseController extends Controller
     public function index(){
         $user=Auth::user();
         if($user->id===1){
-            $course = Course::all();
+            $course = Course::whereNotIn('status_id',[2])->get();
         }else{
-            $course = Course::where('teacher_id',$user->id)->orWhereIn('id', CourseParticipant::where('user_id', $user->id)->pluck('course_id'))->get();
+            $course = Course::whereNotIn('status_id',[2])->where('teacher_id',$user->id)->orWhereIn('id', CourseParticipant::where('user_id', $user->id)->pluck('course_id'))->get();
 
         }
         $courses = $course->map(function($item){
@@ -138,7 +139,7 @@ class CourseController extends Controller
                                 'description'=>$item->description,
                                 'createdDate'=>Carbon::parse($item->created_at)->format('d/m/Y'),
                                 'author'=>User::find($course->teacher_id)->name,
-                                'type'=>'file',
+                                'type'=>CourseContentType::find($item->type_id)->description,
                                 'fileUrl'=>$item->url,
                                 'isVisible'=>true
                             ];
@@ -200,6 +201,7 @@ class CourseController extends Controller
         $validate = Validator::make($request->all(),[
             'title' => 'required',
             'type'  => 'required',
+            'fileUrl'  => 'sometimes',
             'file'  => 'nullable|file|max:20480', // max 20MB
         ]);
         if($validate->fails()){
@@ -217,17 +219,67 @@ class CourseController extends Controller
 
             $filename = time() . '_' . $sanitizedName;
             $path = $request->file('file')->storeAs('contenidos', $filename, 'public');
-        }
+        }else if ($request->fileUrl) {
+            $path = $request->fileUrl;
+        } 
+        $type = CourseContentType::where('description', $request->type)->first();
         $content = CourseContent::create([
             'title'=>$request->title,
             'description'=>$request->description,
             'status_id'=>1,
+            'type_id'=>$type ? $type->id : null,
             'course_id'=>$course,
             'url'=>$path
         ]);
         return response()->json([
             'title'=>'Se ha subido el contenido correctamente',
             'path'=>$path
+        ]);
+    }
+    public function update(Request $request,$course){
+        $validate = Validator::make($request->all(),[
+            'title'=>'required',
+            'description'=>'required',
+            'instructor'=>'required',
+            'category'=>'required',
+            'thumbnail'=>'nullable',
+        ]);
+        if($validate->fails()){
+            return response()->json([
+                'title'=>'Verifique los datos solicitados'
+            ],400);
+        }
+        $teacher = User::where('name',$request->instructor)->first();
+        $category = Category::where('description',$request->category)->first();
+        $course= Course::find($course);
+        if(!$course){
+            return response()->json([
+                'title'=>'Curso no encontrado'
+            ],404);
+        }
+        $course->title=$request->title;
+        $course->description=$request->description;
+        $course->teacher_id=$teacher ? $teacher->id : null;
+        $course->category_id=$category ? $category->id : null;
+        if($request->thumbnail){
+            $course->thumbnail=$request->thumbnail;
+        }
+        $course->save();
+        return response()->json([
+            'title'=>'Se ha actualizado el curso correctamente'
+        ]);
+    }
+    public function delete($course){
+        $course = Course::find($course);
+        if(!$course){
+            return response()->json([
+                'title'=>'Curso no encontrado'
+            ],404);
+        }
+        $course->status_id=2;
+        $course->save();
+        return response()->json([
+            'title'=>'Curso eliminado correctamente'
         ]);
     }
 }

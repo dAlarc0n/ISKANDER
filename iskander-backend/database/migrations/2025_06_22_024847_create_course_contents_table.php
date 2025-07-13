@@ -17,6 +17,8 @@ return new class extends Migration
             $table->string('description');
             $table->text('url');
             $table->unsignedBigInteger('course_id');
+            $table->unsignedBigInteger('type_id');
+            $table->string('prelation_id')->nullable();
             $table->unsignedBigInteger('status_id');
             $table->timestamps();
             $table->foreign('course_id')
@@ -24,6 +26,9 @@ return new class extends Migration
                     ->onDelete('cascade')->onUpdate('cascade');
             $table->foreign('status_id')
                 ->references('id')->on('statuses')
+                    ->onDelete('cascade')->onUpdate('cascade');
+            $table->foreign('type_id')
+                ->references('id')->on('course_content_types')
                     ->onDelete('cascade')->onUpdate('cascade');
         });
     }
