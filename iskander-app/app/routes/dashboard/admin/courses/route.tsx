@@ -17,6 +17,7 @@ import { Textarea } from "~/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Plus, Search, Edit, Trash2, Users, BookOpen, ReceiptText } from "lucide-react"
 import type { Course, CreateCourseData } from "~/types/course"
+
 import { Link,useFetcher,useLoaderData } from "@remix-run/react"
 import type { LoaderFunction } from "@remix-run/node"
 import {users,categories,courses} from "~/services/auth.server"
@@ -107,23 +108,29 @@ export default function CoursesManagement() {
         })
       }
     },[fetcher.data,fetcher.state])
-  const handleEditCourse = (course: Course) => {
-    setEditingCourse(course)
-    setNewCourse({
+
+
+    const handleEditCourse = (course: Course) => {
+      setEditingCourse(course)  
+      setNewCourse({
       title: course.title,
       description: course.description,
       instructor: course.instructor,
       category: course.category,
     })
+
     setIsEditDialogOpen(true)
   }
+  
 
   const handleUpdateCourse = () => {
-    if (!editingCourse) return
+    //if (!editingCourse) return
 
+    /*
     const updatedCourses = courses.map((course) =>
+      
       course.id === editingCourse.id
-        ? {
+        /*? { 
             ...course,
             title: newCourse.title,
             description: newCourse.description,
@@ -131,12 +138,30 @@ export default function CoursesManagement() {
             category: newCourse.category,
           }
         : course,
-    )
-    setCourses(updatedCourses)
-    setIsEditDialogOpen(false)
+        )
+        */
+       
+        
+        fetcher.submit(
+          {
+            id:editingCourse?.id||'',
+            title: newCourse.title,
+            description: newCourse.description,
+            instructor: newCourse.instructor,
+            category: newCourse.category,
+            thumbnail: "/iskander-logo.png",    
+          },
+          
+          {method:"POST",action :"/api/course/edit"  }
+        );
+        
+        
+    //setCourses(updatedCourses)
     setEditingCourse(null)
     setNewCourse({ title: "", description: "", instructor: "", category: "" })
+    setIsEditDialogOpen(false)
   }
+  
 
   const handleDeleteCourse = (courseId: number) => {
     setCourses(courses.filter((course) => course.id !== courseId))
@@ -329,6 +354,8 @@ export default function CoursesManagement() {
         >
           <DialogContent className="w-full max-w-2xl mx-4">
             <DialogHeader>
+
+              {/*editar curso*/}
               <DialogTitle>Editar Curso</DialogTitle>
               <DialogDescription>Modifica los detalles del curso</DialogDescription>
             </DialogHeader>
@@ -352,9 +379,38 @@ export default function CoursesManagement() {
                   rows={3}
                 />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              {/*<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">*/}
+                
                 <div className="grid gap-2">
                   <Label htmlFor="edit-instructor">Instructor</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="create-instructor">Profesor</Label>
+                    <Combobox
+                      options={user}
+                      value={newCourse.instructor}
+                      onValueChange={(value:any) => setNewCourse({ ...newCourse, instructor: value })}
+                      placeholder="Seleccionar profesor"
+                      searchPlaceholder="Buscar profesor..."
+                      emptyText="No se encontró el profesor."
+                      className="truncate"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="create-category">Categoría</Label>
+                    <Combobox
+                      options={category}
+                      value={newCourse.category}
+                      onValueChange={(value:any) => setNewCourse({ ...newCourse, category: value })}
+                      placeholder="Seleccionar categoría"
+                      searchPlaceholder="Buscar categoría..."
+                      emptyText="No se encontró la categoría."
+                    />
+                  </div>
+                {/*</div>*/}
+
+                {/*
                   <Select
                     value={newCourse.instructor}
                     onValueChange={(value) => setNewCourse({ ...newCourse, instructor: value })}
@@ -363,6 +419,7 @@ export default function CoursesManagement() {
                       <SelectValue placeholder="Seleccionar instructor" />
                     </SelectTrigger>
                     <SelectContent>
+                      
                       <SelectItem value="Juan Pérez">Juan Pérez</SelectItem>
                       <SelectItem value="María García">María García</SelectItem>
                       <SelectItem value="Ana López">Ana López</SelectItem>
@@ -386,6 +443,8 @@ export default function CoursesManagement() {
                       <SelectItem value="Negocios">Negocios</SelectItem>
                     </SelectContent>
                   </Select>
+
+                  */}
                 </div>
               </div>
             </div>
