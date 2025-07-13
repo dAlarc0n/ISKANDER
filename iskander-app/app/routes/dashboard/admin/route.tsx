@@ -5,10 +5,10 @@ import { Badge } from "~/components/ui/badge"
 import { Users, BookOpen, FileText, TrendingUp, Plus, Eye } from "lucide-react"
 import type { Stats, Activity } from "~/types/common"
 import type {LoaderFunction } from "@remix-run/node";
-import { requireAdmin } from "~/services/auth.server"
+import { requireAdmin2 } from "~/services/auth.server"
 
 export const loader: LoaderFunction = async ({ request }) => {
-  await requireAdmin({request})
+  await requireAdmin2({request})
   return null;
 };
 

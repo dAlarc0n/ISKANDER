@@ -24,7 +24,9 @@ export default defineConfig({
           route("dashboard","routes/dashboard/layout.tsx",()=>{
             route("","routes/dashboard/admin/route.tsx",{index:true})
             route("courses","routes/dashboard/admin/courses/route.tsx")
-            route("courses/:id","routes/dashboard/admin/courses/[id].tsx")
+            route("courses/:id","routes/dashboard/admin/courses/[id]/route.tsx")
+            route("courses/:id/forum/:forumId","routes/dashboard/admin/courses/[id]/forum/[forumId]/route.tsx")
+            route("courses/:id/forum/:forumId/post/:postId","routes/dashboard/admin/courses/[id]/forum/[forumId]/post/[postId]/route.tsx")
             route("users","routes/dashboard/admin/users/route.tsx")
           })
           route("/api/course/create","routes/api/course/create/route.tsx")

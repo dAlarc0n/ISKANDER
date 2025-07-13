@@ -191,6 +191,16 @@ export async function requireAdmin({ request }: any) {
     }
   }
 }
+export async function requireAdmin2({ request }: any) {
+  if (!await user({ request })) {
+    throw redirect("/admin");
+  }else{
+    const users =  await user({ request })
+    if(users.id !== 0){
+      throw redirect("/dashboard/courses");
+    }
+  }
+}
 
 export async function redirectLoginOrDashBoard({request}:any){
   if (!await user({ request })) {

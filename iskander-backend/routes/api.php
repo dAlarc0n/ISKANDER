@@ -13,11 +13,11 @@ Route::get('/user/option', function (Request $request) {
     $admin = $user->hasRole('admin');
     $options = [];
     if($admin){
-        $options [] = [
-            'name'=>'Dashboard',
-            'href'=>'/dashboard',
-            'icon'=> 'Home'
-        ];
+        // $options [] = [
+        //     'name'=>'Dashboard',
+        //     'href'=>'/dashboard',
+        //     'icon'=> 'Home'
+        // ];
         $options [] = [
             'name'=>'Usuarios',
             'href'=>'/dashboard/users',

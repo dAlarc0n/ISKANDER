@@ -496,10 +496,23 @@ export default function CourseDetailPage() {
                             </Button>
                           )}
                           {
-                            content.type !== "file" && (
-                              <Button variant="ghost" size="sm" className="text-purple-600 hover:text-purple-700">
+                            content.type === "video" && (
+                              <Button variant="ghost" size="sm" className="text-purple-600 hover:text-purple-700"
+                              onClick={()=>{
+                                const newTab = window.open(content.fileUrl, '_blank')
+                              }}
+                              >
                                 <Eye className="h-4 w-4" />
                               </Button>
+                            )
+                            }
+                            {
+                            content.type === "forum" && (
+                              <Link to={`/dashboard/courses/${id}/forum/${content.id}`}>
+                                <Button variant="ghost" size="sm" className="text-purple-600 hover:text-purple-700">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </Link>
                             )
                             }
                           {course.rol && (
