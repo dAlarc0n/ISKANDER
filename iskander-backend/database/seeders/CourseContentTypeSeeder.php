@@ -17,6 +17,8 @@ class CourseContentTypeSeeder extends Seeder
             ['description' => 'file'],
             ['description' => 'forum'],
             ['description' => 'announcement'],
+            ['description' => 'assignment'],
+            ['description' => 'quiz'],
             ['description' => 'video'],
             
       ];
