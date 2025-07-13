@@ -2,9 +2,10 @@ import { useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card"
 import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
-import { Users, BookOpen, FileText, TrendingUp, Plus, Eye } from "lucide-react"
+import { Users, BookOpen, FileText, TrendingUp, Plus, Eye, Link } from "lucide-react"
 import type { Stats, Activity } from "~/types/common"
 import type {LoaderFunction } from "@remix-run/node";
+import { useNavigate } from "@remix-run/react";
 import { requireAdmin2 } from "~/services/auth.server"
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -26,6 +27,16 @@ export default function AdminDashboard() {
     { id: 3, action: "Contenido subido", user: "Admin", course: "JavaScript Básico", time: "Hace 1 hora" },
     { id: 4, action: "Usuario inscrito", user: "Ana López", course: "Python para Principiantes", time: "Hace 2 horas" },
   ])
+
+  const navigate = useNavigate()
+
+  const handleNavigateCourses = () =>{
+    navigate("/dashboard/courses")
+  }
+
+  const handleNavigateUser = () =>{
+    navigate("/dashboard/users")
+  }
 
   return (
       <div className="space-y-6">
@@ -131,14 +142,19 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 gap-4">
-                <Button variant="outline" className="h-20 flex-col">
+                <Button variant="outline" className="h-20 flex-col" onClick={handleNavigateUser}>
                   <Users className="h-6 w-6 mb-2" />
                   <span className="text-sm">Gestionar Usuarios</span>
                 </Button>
-                <Button variant="outline" className="h-20 flex-col">
+
+
+                <Button variant="outline" className="h-20 flex-col" onClick={handleNavigateCourses}>
                   <BookOpen className="h-6 w-6 mb-2" />
                   <span className="text-sm">Crear Curso</span>
                 </Button>
+
+
+
                 {/* <Button variant="outline" className="h-20 flex-col">
                   <FileText className="h-6 w-6 mb-2" />
                   <span className="text-sm">Subir Contenido</span>
