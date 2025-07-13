@@ -1,4 +1,4 @@
-import type React from "react"
+
 import { useState } from "react"
 import { Button } from "~/components/ui/button"
 import {
@@ -12,6 +12,7 @@ import {
 import { Label } from "~/components/ui/label"
 import { Input } from "~/components/ui/input"
 import { Textarea } from "~/components/ui/textarea"
+import { Combobox } from "~/components/ui/combobox"
 import { Switch } from "~/components/ui/switch"
 import { Card, CardContent } from "~/components/ui/card"
 import { Upload, FileText, MessageSquare, Megaphone, Video, GraduationCap } from "lucide-react"
@@ -23,6 +24,7 @@ interface AddContentModalProps {
   onAdd: (content: Omit<CourseContent, "id">) => void
   sectionId: number
   sectionTitle: string
+  
 }
 
 interface ContentFormData {
@@ -34,6 +36,14 @@ interface ContentFormData {
   file?: File
 }
 
+const staticRelatedContentOptions = [
+  { value: "content1_id", label: "Introducción al Curso - Bienvenida (Anuncio)" },
+  { value: "content2_id", label: "Semana 1 - Guía de Estudio (Archivo)" },
+  { value: "content3_id", label: "Semana 2 - Debate sobre IA (Foro)" },
+  { value: "content4_id", label: "Semana 3 - Ejercicio Práctico 1 (Tarea)" },
+  { value: "content5_id", label: "Semana 4 - Cuestionario Final (Cuestionario)" },
+];
+
 export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitle }: AddContentModalProps) {
   const [formData, setFormData] = useState<ContentFormData>({
     title: "",
@@ -41,6 +51,8 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
     type: "file",
     isVisible: true,
   })
+
+  const [selectedStaticContentId, setSelectedStaticContentId] = useState<string>(""); 
 
   const contentTypes = [
     { value: "file", label: "Archivo", icon: FileText, description: "Subir documentos, PDFs, imágenes" },
@@ -51,6 +63,7 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
     { value: "quiz", label: "Cuestionario", icon: GraduationCap, description: "Evaluación automática" },
   ]
 
+  {/* la informacion es de contenido del curso (ajustar parametro)*/}
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -157,7 +170,7 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
           )}
           </div>
 
-          {formData.type === "file" && (
+          {(formData.type === "file" || formData.type === "assignment") && (
             <div className="space-y-4">
               <div className="grid gap-2">
                 <Label htmlFor="file">Archivo</Label>
@@ -226,6 +239,31 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
             </div>
           )}
 
+
+          
+
+          {formData.type === "assignment"  &&(
+            <div className="grid gap-2">
+              <div className="grid grid-cols-1">
+                   <div className="grid gap-2">
+                     <Label htmlFor="tarea">Actividades !!!estatico</Label>
+                     <Combobox
+                      options={staticRelatedContentOptions} 
+                      value={selectedStaticContentId || ""}                                  
+                      onValueChange={(value: string) => {setSelectedStaticContentId(value);}}
+                       placeholder="Seleccionar la actividad"
+                       searchPlaceholder="Buscar Actividad ..."
+                       emptyText="No se encontró la actividad."
+                       className="truncate"
+                     />
+                   </div>
+                 </div>
+               </div>
+          )}
+
+
+          {formData.type !== "assignment" && (
+
           <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
             <div className="space-y-1">
               <Label htmlFor="visibility">Visible para estudiantes</Label>
@@ -237,6 +275,7 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
               onCheckedChange={(checked:any) => setFormData({ ...formData, isVisible: checked })}
             />
           </div>
+          )}
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={onClose}>

@@ -24,9 +24,11 @@ import type { CourseDetail, CourseContent, CourseGrade, CourseStudent } from "~/
 import { AddContentModal } from "~/components/course/add-content-modal"
 import { AddStudentModal } from "~/components/course/add-student-modal"
 import { GradeModal } from "~/components/course/grade-modal"
-//import { ForumModal } from "~/components/course/add-forum-modal"
+
+import { BannerModal } from "~/components/course/add-banner-modal"
+
 import type {LoaderFunctionArgs} from "@remix-run/node";
-import  {useFetcher, useLoaderData, useParams} from "@remix-run/react";
+import  {useFetcher, useLoaderData, useParams, Link} from "@remix-run/react";
 import {courseDetail,courseUser} from '~/services/auth.server'
 import { User } from "~/types/user"
 import Swal from "sweetalert2"
@@ -226,7 +228,8 @@ export default function CourseDetailPage() {
   const [isAddContentModalOpen, setIsAddContentModalOpen] = useState(false)
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false)
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false)
-  // const [isForumModalOpen, setIsForumModalOpen] = useState(false)
+
+  const [isBannerModalOpen, setIsBannerModalOpen] = useState(false)
   const [selectedSectionId, setSelectedSectionId] = useState<number>(0)
   const [editingGrade, setEditingGrade] = useState<CourseGrade | null>(null)
   useEffect(()=>{
@@ -283,8 +286,15 @@ export default function CourseDetailPage() {
     setIsAddContentModalOpen(true)
   }
 
+  const handleAddBanner = (sectionId: number)=>{
+    setSelectedSectionId(sectionId)
+    {course.rol &&(
+      setIsBannerModalOpen(true)
+    )}
+  }
+
+
   const handleContentAdded = (content: Omit<CourseContent, "id">&{file?:File}) => {
-    console.log(content)
      const formData = new FormData()
       formData.append("title", content.title)
       formData.append("description", content.description ||'')
@@ -301,16 +311,15 @@ export default function CourseDetailPage() {
       action: `/api/course/content`,
       encType: "multipart/form-data" 
     });
+    console.log("Imagen agregada:", content)
   }
 
-/* datos del foro
 
- const handleForumAdded = (content: Omit<CourseContent, "id">&{file?:File}) => {
+
+ const handleAddNewBanner = (content: Omit<CourseContent, "id">&{file?:File}) => {
      const formData = new FormData()
-      formData.append("title", content.title)
-      formData.append("description", content.description ||'')
+
       formData.append("type", content.type)
-      formData.append("isVisible", String(content.isVisible))
       formData.append('id',id || '')
       if (content.file) {
         formData.append("file", content.file)
@@ -318,12 +327,11 @@ export default function CourseDetailPage() {
       }
         fetcher.submit(formData, {
           method: "POST",
-          action: `/api/course/content`,
+          action: `/api/course/banner`,
           encType: "multipart/form-data" 
         });
-        console.log("Contenido agregado:", content)
     }
-  */
+
 
 
   const handleStudentsAdded = (students: CourseStudent[]) => {
@@ -346,6 +354,8 @@ export default function CourseDetailPage() {
     setIsGradeModalOpen(true)
   }
   
+
+
   const availableActivities = course.sections.flatMap((section) =>
     section.contents
       .filter((content) => content.type === "assignment" || content.type === "quiz")
@@ -372,10 +382,12 @@ export default function CourseDetailPage() {
   return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="sm" onClick={() => {}}>
+          <Link to="/dashboard/courses">
+            <Button variant="ghost" size="sm">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Volver
           </Button>
+          </Link>
           <div className="flex-1">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{course.title}</h1>
             <p className="text-gray-600">
@@ -385,8 +397,11 @@ export default function CourseDetailPage() {
           <Badge variant="secondary">{course.category}</Badge>
         </div>
         <Card>
-          <CardContent className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <CardContent className="  p-6 bg-cover bg-center bg-[url(/banner1.png)]"
+          style={{ backgroundImage : `Url(${course.thumbnail || '/logo-dark.png'})` }}
+          >
+
+            <div className=" flex flex-col-reverse xl:grid xl:grid-cols-3 gap-6"> {/* original grid grid-cols-1 lg:grid-cols-3 gap-6*/}
               <div className="lg:col-span-2">
                 <h3 className="text-lg font-semibold mb-2">Descripción del curso</h3>
                 <p className="text-gray-600 mb-4">{course.description}</p>
@@ -401,12 +416,15 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
               </div>
-              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden">
+
+              <div className=" aspect-video bg-gray-100 rounded-lg overflow-hidden ">
                 <img
                   src={course.thumbnail || "/placeholder.svg"}
                   alt={course.title}
-                  className="w-full h-full object-cover"
-                />
+                  className="w-full h-full object-cover hover:opacity-50 transition-opacity duration-300 cursor-pointer"
+                  onClick={()=> handleAddBanner(1)}
+                  />
+
               </div>
             </div>
           </CardContent>
@@ -594,7 +612,7 @@ export default function CourseDetailPage() {
               <h3 className="text-lg font-semibold">Foros de discusión</h3>
               
               {isAcess &&(
-              <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsForumModalOpen(true)}>
+              <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsBannerModalOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
                 Crear foro
               </Button>
@@ -659,19 +677,19 @@ export default function CourseDetailPage() {
           editingGrade={editingGrade}
         />
 
+        <BannerModal
+            isOpen={isBannerModalOpen}
+            onClose={() => setIsBannerModalOpen(false)}
+            onAdd={handleAddNewBanner}
+            sectionId={selectedSectionId}
+            sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
+        />
       </div>
 
 
       /* Abrir modal del Foro
 
 
-        <ForumModal
-            isOpen={isForumModalOpen}
-            onClose={() => setIsForumModalOpen(false)}
-            onAdd={handleForumAdded}
-            sectionId={selectedSectionId}
-            sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
-        /> 
         */
   )
 }

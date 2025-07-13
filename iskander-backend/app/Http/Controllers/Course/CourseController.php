@@ -282,4 +282,39 @@ class CourseController extends Controller
             'title'=>'Curso eliminado correctamente'
         ]);
     }
+    public function banner($course){
+        $course = Course::find($course);
+        if(!$course){
+            return response()->json([
+                'title'=>'Curso no encontrado'
+            ],404);
+        }
+        $validate = Validator::make(request()->all(),[
+            'file' => 'required',
+        ]);
+        if($validate->fails()){
+            return response()->json([
+                'title'=>'Verifique los datos suministrados o suba un archivo más pequeño'
+            ],400);
+        }
+        $path = '';
+        if (request()->hasFile('file')) {
+            $originalName = request()->file('file')->getClientOriginalName();
+
+            $sanitizedName = str_replace(' ', '_', $originalName);
+            $sanitizedName = preg_replace('/[^A-Za-z0-9.\-_]/', '', $sanitizedName);
+            $filename = time() . '_' . $sanitizedName;
+            $path = request()->file('file')->storeAs('banners', $filename, 'public');
+        } else {
+            return response()->json([
+                'title'=>'Debe subir un archivo de imagen'
+            ],400);
+        }
+        $course->thumbnail=$path;
+        $course->save();
+        return response()->json([
+            'title'=>'Banner actualizado correctamente',
+            'path'=>$path
+        ]);
+    }
 }
