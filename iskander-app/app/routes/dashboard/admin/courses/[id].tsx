@@ -400,12 +400,12 @@ export default function CourseDetailPage() {
           <Badge variant="secondary">{course.category}</Badge>
         </div>
         <Card>
-          <CardContent className="  p-6 bg-cover bg-center bg-[url(/banner1.png)]"
-          style={{ backgroundImage : `Url(${course.thumbnail || '/logo-dark.png'})` }} 
+          <CardContent className="  p-6 bg-cover bg-center rounded-lg bg-[url(/banner1.png)]"
+          //style={{ backgroundImage : `Url(${course.thumbnail || '/logo-dark.png'})` }} 
           >
 
-            <div className=" flex flex-col-reverse xl:grid xl:grid-cols-3 gap-6"> {/* original grid grid-cols-1 lg:grid-cols-3 gap-6*/}
-              <div className="lg:col-span-2">
+            <div className=" flex flex-col-reverse xl:grid xl:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 bg-opacity-45 rounded-lg w-full p-3 bg-purple-200 ">
                 <h3 className="text-lg font-semibold mb-2">Descripción del curso</h3>
                 <p className="text-gray-600 mb-4">{course.description}</p>
                 <div className="flex flex-wrap gap-4 text-sm text-gray-500">
