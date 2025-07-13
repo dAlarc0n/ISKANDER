@@ -4,6 +4,13 @@ import { Button } from "~/components/ui/button"
 import { Badge } from "~/components/ui/badge"
 import { Users, BookOpen, FileText, TrendingUp, Plus, Eye } from "lucide-react"
 import type { Stats, Activity } from "~/types/common"
+import type {LoaderFunction } from "@remix-run/node";
+import { requireAdmin } from "~/services/auth.server"
+
+export const loader: LoaderFunction = async ({ request }) => {
+  await requireAdmin({request})
+  return null;
+};
 
 export default function AdminDashboard() {
   const [stats] = useState<Stats>({
