@@ -393,7 +393,6 @@ export default function CoursesManagement() {
               {/*<div className="grid grid-cols-1 sm:grid-cols-2 gap-4">*/}
                 
                 <div className="grid gap-2">
-                  <Label htmlFor="edit-instructor">Instructor</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label htmlFor="create-instructor">Profesor</Label>
