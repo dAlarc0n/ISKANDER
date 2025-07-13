@@ -395,11 +395,11 @@ export default function CourseDetailPage() {
           <Badge variant="secondary">{course.category}</Badge>
         </div>
         <Card>
-          <CardContent className="p-6 bg-no-repeat bg-center bg-[url(/logo-dark.png)]"
-          style={{ backgroundImage : `Url(${course.thumbnail || '/placeholder.svg'})` }} 
+          <CardContent className="  p-6 bg-cover bg-center bg-[url(/banner1.png)]"
+          style={{ backgroundImage : `Url(${course.thumbnail || '/logo-dark.png'})` }} 
           >
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className=" flex flex-col-reverse xl:grid xl:grid-cols-3 gap-6"> {/* original grid grid-cols-1 lg:grid-cols-3 gap-6*/}
               <div className="lg:col-span-2">
                 <h3 className="text-lg font-semibold mb-2">Descripción del curso</h3>
                 <p className="text-gray-600 mb-4">{course.description}</p>
@@ -414,8 +414,8 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
               </div>
-              <div className="aspect-video bg-gray-100 rounded-lg overflow-hidden ">
-                
+
+              <div className=" aspect-video bg-gray-100 rounded-lg overflow-hidden ">                
                 <img
                   src={course.thumbnail || "/placeholder.svg"}
                   alt={course.title}

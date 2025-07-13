@@ -145,15 +145,12 @@ export function GradeModal({ isOpen, onClose, onSave, students, activities, edit
               <SelectContent>
                 {students.map((student) => (
                   <SelectItem key={student.id} value={student.id.toString()}>
-                    <div className="flex items-center gap-2">
+                     <div className="flex items-center gap-2">
                       <Avatar className="h-6 w-6">
                         <AvatarImage src={student.avatar || "/placeholder.svg"} />
-                        <AvatarFallback className="text-xs">
-                          {student.name
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
+                          <AvatarFallback className="text-xs">
+                              {student.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
                       </Avatar>
                       <span>{student.name}</span>
                     </div>
@@ -168,13 +165,11 @@ export function GradeModal({ isOpen, onClose, onSave, students, activities, edit
             <div className="p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center gap-4">
                 <Avatar>
-                  <AvatarImage src={selectedStudent.avatar || "/placeholder.svg"} />
-                  <AvatarFallback>
-                    {selectedStudent.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
+                  
+                  <AvatarImage src={selectedStudent.avatar || "/placeholder.svg"} />                
+                  <AvatarFallback className="text-xs">
+                              {selectedStudent.name.charAt(0).toUpperCase()}
+                            </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
                   <h4 className="font-medium">{selectedStudent.name}</h4>
