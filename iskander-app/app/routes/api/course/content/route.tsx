@@ -11,6 +11,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const id = formData.get("id")
   const title = formData.get("title")
   const description = formData.get("description")
+  const fileUrl = formData.get("fileUrl")
   const type = formData.get("type")
   const isVisible = formData.get("isVisible")
   const file = formData.get("file") as File | null
@@ -18,6 +19,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const payload = new FormData()
   payload.append("title", title as string)
   payload.append("description", description as string)
+  payload.append("fileUrl", fileUrl as string)
   payload.append("type", type as string)
   payload.append("isVisible", isVisible as string)
   if (file) payload.append("file", file)

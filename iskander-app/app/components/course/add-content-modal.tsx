@@ -30,6 +30,7 @@ interface ContentFormData {
   description: string
   type: CourseContent["type"]
   isVisible: boolean
+  url?: string
   file?: File
 }
 
@@ -58,6 +59,7 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
       description: formData.description,
       type: formData.type,
       createdDate: new Date().toISOString(),
+      fileUrl: formData.type === "video" ? formData.url : undefined,
       author: "Admin", 
       isVisible: formData.isVisible,
       ...(formData.file && {
@@ -67,7 +69,6 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
       }),
     
     }
-    console.log(formData.file)
     onAdd(newContent)
     resetForm()
     onClose()
@@ -187,7 +188,13 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
           {formData.type === "video" && (
             <div className="grid gap-2">
               <Label htmlFor="video-url">URL del video</Label>
-              <Input id="video-url" placeholder="https://youtube.com/watch?v=... o URL del archivo" />
+              <Textarea
+                id="video-url"
+                value={formData.url}
+                onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                placeholder="https://youtube.com/watch?v=... o URL del archivo"
+                rows={1}
+              />
             </div>
           )}
 

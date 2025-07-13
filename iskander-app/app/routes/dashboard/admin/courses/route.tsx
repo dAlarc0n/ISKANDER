@@ -167,7 +167,24 @@ export default function CoursesManagement() {
   
 
   const handleDeleteCourse = (courseId: number) => {
-    setCourses(courses.filter((course) => course.id !== courseId))
+    Swal.fire({
+      title: "¿Estás seguro?",
+      text: "Esta acción eliminará el curso permanentemente.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetcher.submit(
+          {
+            id:courseId,   
+          },
+          {method:"POST",action :"/api/course/delete"  }
+        );
+      }
+    })
+    
   }
 
   const resetForm = () => {

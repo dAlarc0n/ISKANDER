@@ -284,9 +284,11 @@ export default function CourseDetailPage() {
   }
 
   const handleContentAdded = (content: Omit<CourseContent, "id">&{file?:File}) => {
+    console.log(content)
      const formData = new FormData()
       formData.append("title", content.title)
       formData.append("description", content.description ||'')
+      formData.append("fileUrl", content.fileUrl ||'')
       formData.append("type", content.type)
       formData.append("isVisible", String(content.isVisible))
       formData.append('id',id || '')
@@ -299,7 +301,6 @@ export default function CourseDetailPage() {
       action: `/api/course/content`,
       encType: "multipart/form-data" 
     });
-    console.log("Contenido agregado:", content)
   }
 
 /* datos del foro
@@ -476,12 +477,18 @@ export default function CourseDetailPage() {
                               <Download className="h-4 w-4" />
                             </Button>
                           )}
-                          {course.rol && (<Button variant="ghost" size="sm">
-                            <Edit className="h-4 w-4" />
-                          </Button>)}
-                          {course.rol && (<Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
+                          {
+                            content.type !== "file" && (
+                              <Button variant="ghost" size="sm" className="text-purple-600 hover:text-purple-700">
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            )
+                            }
+                          {course.rol && (
+                            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
                             <Trash2 className="h-4 w-4" />
-                          </Button>)}
+                          </Button>
+                        )}
                         </div>
                       </div>
                     ))}
