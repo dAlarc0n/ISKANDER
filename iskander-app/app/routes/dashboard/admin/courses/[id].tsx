@@ -344,6 +344,7 @@ export default function CourseDetailPage() {
     setEditingGrade(grade)
     setIsGradeModalOpen(true)
   }
+  
   const availableActivities = course.sections.flatMap((section) =>
     section.contents
       .filter((content) => content.type === "assignment" || content.type === "quiz")

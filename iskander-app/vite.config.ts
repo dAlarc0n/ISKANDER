@@ -32,6 +32,7 @@ export default defineConfig({
           route("/api/course/content","routes/api/course/content/route.tsx")
           route("/api/course/update/:course_id","routes/api/course/update/route.tsx")
           route("/api/user/create","routes/api/user/create/route.tsx")
+          route("/api/course/edit","routes/api/course/edit/route.tsx")
           route("/api/user/update/:user_id","routes/api/user/update/route.tsx")
           route("/logout","routes/logout/route.tsx")
         })
