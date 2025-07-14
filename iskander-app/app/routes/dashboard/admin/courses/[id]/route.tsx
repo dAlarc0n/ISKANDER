@@ -24,9 +24,8 @@ import type { CourseDetail, CourseContent, CourseGrade, CourseStudent } from "~/
 import { AddContentModal } from "~/components/course/add-content-modal"
 import { AddStudentModal } from "~/components/course/add-student-modal"
 import { GradeModal } from "~/components/course/grade-modal"
-
 import { BannerModal } from "~/components/course/add-banner-modal"
-
+import type { Course, CreateBannerData} from "~/types/course"
 import type {LoaderFunctionArgs} from "@remix-run/node";
 import  {useFetcher, useLoaderData, useParams, Link} from "@remix-run/react";
 import {courseDetail,courseUser} from '~/services/auth.server'
@@ -42,172 +41,7 @@ interface LoaderData {
   courseDetails:CourseDetail,
   users:User[]
 }
-// const mockCourseDetail: CourseDetail = {
-//   id: 1,
-//   title: "React Avanzado",
-//   description: "Aprende React con hooks, context y patrones avanzados para crear aplicaciones web modernas",
-//   instructor: "Juan Pérez",
-//   category: "Desarrollo Web",
-//   enrolledStudents: 45,
-//   createdDate: "2024-01-15",
-//   thumbnail: "/iskander-logo.png",
-//   sections: [
-//     {
-//       id: 1,
-//       title: "Introducción a React",
-//       description: "Conceptos básicos y configuración del entorno",
-//       order: 1,
-//       isVisible: true,
-//       contents: [
-//         {
-//           id: 1,
-//           title: "Bienvenida al curso",
-//           type: "announcement",
-//           description: "Información importante sobre el curso",
-//           createdDate: "2024-01-15",
-//           author: "Juan Pérez",
-//           isVisible: true,
-//         },
-//         {
-//           id: 2,
-//           title: "Configuración del entorno",
-//           type: "file",
-//           description: "Guía paso a paso para configurar React",
-//           createdDate: "2024-01-16",
-//           author: "Juan Pérez",
-//           fileUrl: "/files/setup-guide.pdf",
-//           fileSize: "2.5 MB",
-//           fileType: "PDF",
-//           isVisible: true,
-//         },
-//         {
-//           id: 3,
-//           title: "Video: Introducción a JSX",
-//           type: "video",
-//           description: "Conceptos básicos de JSX",
-//           createdDate: "2024-01-17",
-//           author: "Juan Pérez",
-//           isVisible: true,
-//         },
-//       ],
-//     },
-//     {
-//       id: 2,
-//       title: "Hooks y Estado",
-//       description: "Manejo de estado con hooks",
-//       order: 2,
-//       isVisible: true,
-//       contents: [
-//         {
-//           id: 4,
-//           title: "Foro: Dudas sobre useState",
-//           type: "forum",
-//           description: "Comparte tus dudas sobre el hook useState",
-//           createdDate: "2024-01-20",
-//           author: "Juan Pérez",
-//           isVisible: true,
-//         },
-//         {
-//           id: 5,
-//           title: "Tarea: Contador con useState",
-//           type: "assignment",
-//           description: "Crea un contador usando useState",
-//           createdDate: "2024-01-22",
-//           author: "Juan Pérez",
-//           isVisible: true,
-//         },
-//       ],
-//     },
-//   ],
-//   students: [
-//     // {
-//     //   id: 1,
-//     //   name: "María García",
-//     //   email: "maria@ejemplo.com",
-//     //   enrolledDate: "2024-01-20",
-//     //   lastAccess: "2024-03-15",
-//     //   progress: 75,
-//     //   avatar: "/placeholder.svg?height=40&width=40",
-//     // },
-//     // {
-//     //   id: 2,
-//     //   name: "Carlos López",
-//     //   email: "carlos@ejemplo.com",
-//     //   enrolledDate: "2024-01-22",
-//     //   lastAccess: "2024-03-14",
-//     //   progress: 60,
-//     //   avatar: "/placeholder.svg?height=40&width=40",
-//     // },
-//     // {
-//     //   id: 3,
-//     //   name: "Ana Martínez",
-//     //   email: "ana@ejemplo.com",
-//     //   enrolledDate: "2024-01-25",
-//     //   lastAccess: "2024-03-16",
-//     //   progress: 90,
-//     //   avatar: "/placeholder.svg?height=40&width=40",
-//     // },
-//   ],
-//   grades: [
-//     // {
-//     //   id: 1,
-//     //   studentId: 1,
-//     //   studentName: "María García",
-//     //   activity: "Tarea: Contador con useState",
-//     //   grade: 85,
-//     //   maxGrade: 100,
-//     //   submittedDate: "2024-02-01",
-//     //   gradedDate: "2024-02-03",
-//     // },
-//     // {
-//     //   id: 2,
-//     //   studentId: 2,
-//     //   studentName: "Carlos López",
-//     //   activity: "Tarea: Contador con useState",
-//     //   grade: 78,
-//     //   maxGrade: 100,
-//     //   submittedDate: "2024-02-02",
-//     //   gradedDate: "2024-02-04",
-//     // },
-//   ],
-//   announcements: [
-//     {
-//       id: 1,
-//       title: "Bienvenidos al curso",
-//       content:
-//         "¡Hola a todos! Bienvenidos al curso de React Avanzado. Estoy emocionado de acompañarlos en este viaje de aprendizaje.",
-//       author: "Juan Pérez",
-//       createdDate: "2024-01-15",
-//       isVisible: true,
-//     },
-//     {
-//       id: 2,
-//       title: "Recordatorio: Entrega de tarea",
-//       content: "Recuerden que la tarea del contador con useState debe ser entregada antes del viernes.",
-//       author: "Juan Pérez",
-//       createdDate: "2024-01-28",
-//       isVisible: true,
-//     },
-//   ],
-//   forums: [
-//     // {
-//     //   id: 1,
-//     //   title: "Dudas generales",
-//     //   description: "Espacio para resolver dudas generales del curso",
-//     //   posts: 23,
-//     //   lastPost: "2024-03-15",
-//     //   lastPostAuthor: "María García",
-//     // },
-//     // {
-//     //   id: 2,
-//     //   title: "Proyectos y ejemplos",
-//     //   description: "Comparte tus proyectos y ejemplos de código",
-//     //   posts: 15,
-//     //   lastPost: "2024-03-14",
-//     //   lastPostAuthor: "Carlos López",
-//     // },
-//   ],
-// }
+
 export const loader = async ({ request, params }: LoaderFunctionArgs) => {
 
   const id = params.id;
@@ -228,7 +62,12 @@ export default function CourseDetailPage() {
   const [isAddContentModalOpen, setIsAddContentModalOpen] = useState(false)
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false)
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false)
+  const [editingBanner, setEditingBanner] = useState<Course | null>(null)
+  const [newBanner, setNewBanner] = useState<CreateBannerData>({ thumbnail: "" })
 
+
+
+  
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false)
   const [selectedSectionId, setSelectedSectionId] = useState<number>(0)
   const [editingGrade, setEditingGrade] = useState<CourseGrade | null>(null)
@@ -286,11 +125,13 @@ export default function CourseDetailPage() {
     setIsAddContentModalOpen(true)
   }
 
-  const handleAddBanner = (sectionId: number)=>{
+
+  const handleAddBanner = (sectionId: number)  => {
+   if (course.rol) {
+    setEditingBanner(course)
+    setIsBannerModalOpen(true)
     setSelectedSectionId(sectionId)
-    {course.rol &&(
-      setIsBannerModalOpen(true)
-    )}
+    }
   }
 
 
@@ -313,28 +154,60 @@ export default function CourseDetailPage() {
     });
     console.log("Imagen agregada:", content)
   }
+  
 
+const handleAddNewBanner = (data: { id: number; file?: File }) => {
+  if (!data.file) return 
 
+   const formData = new FormData()
+  formData.append("file", data.file)
+  formData.append("id", String(data.id))
 
- const handleAddNewBanner = (content: Omit<CourseContent, "id">&{file?:File}) => {
-     const formData = new FormData()
+  fetcher.submit(formData, {
+    method: "POST",
 
-      formData.append("type", content.type)
-      formData.append('id',id || '')
-      if (content.file) {
-        formData.append("file", content.file)
-        
-      }
-        fetcher.submit(formData, {
-          method: "POST",
-          action: `/api/course/banner`,
-          encType: "multipart/form-data" 
-        });
+    /*cambiar ruta */
+    action: "/api/course/edit",
+    encType: "multipart/form-data",
+  })  
+  console.log("Imagen agregada:", data)
+}
+
+useEffect(() => {
+  const result = fetcher.data as {
+    status: number
+    data: { thumbnailUrl: string }
+  }
+
+  console.log(" Respuesta del backend (edit):", result)
+
+  if (result?.data?.thumbnailUrl && fetcher.state === "idle" && course) {
+    const payload = {
+      id: course.id,
+      title: course.title || "",
+      description: course.description || "",
+      instructor: course.instructor || "",
+      category: course.category || "",
+      thumbnail: result.data.thumbnailUrl,
     }
 
+    console.log(" Enviando curso editado:", payload)
 
+    fetcher.submit(payload, {
+      method: "POST",
+      
+      /*cambiar ruta */
+      action: "/api/course/edit",
+      encType: "multipart/form-data",
+    })
+  }
+}, [fetcher.data, fetcher.state])
 
-  const handleStudentsAdded = (students: CourseStudent[]) => {
+        
+
+        
+        
+        const handleStudentsAdded = (students: CourseStudent[]) => {
     const formData = new FormData();
     formData.append("students", JSON.stringify(students));
     formData.append("id",id || '')
@@ -344,7 +217,7 @@ export default function CourseDetailPage() {
   });
     console.log("Estudiantes agregados:", students)
   }
-
+  
   const handleGradeSaved = (grade: Omit<CourseGrade, "id">) => {
     console.log("Calificación guardada:", grade)
   }
@@ -354,8 +227,8 @@ export default function CourseDetailPage() {
     setIsGradeModalOpen(true)
   }
   
-
-
+  
+  
   const availableActivities = course.sections.flatMap((section) =>
     section.contents
       .filter((content) => content.type === "assignment" || content.type === "quiz")
@@ -379,7 +252,8 @@ export default function CourseDetailPage() {
           })
         }
       },[fetcher.data,fetcher.state])
-  return (
+   
+      return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
           <Link to="/dashboard/courses">
@@ -617,51 +491,7 @@ export default function CourseDetailPage() {
             </Card>
           </TabsContent>
 
-
-           {/* Lista de foros y boton de agragar
-
-          <TabsContent value="forums" className="space-y-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Foros de discusión</h3>
-              
-              {isAcess &&(
-              <Button className="bg-purple-600 hover:bg-purple-700" onClick={() => setIsBannerModalOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Crear foro
-              </Button>
-              )}
-
-            </div>
-
-            <div className="grid gap-4">
-              {course.forums.map((forum) => (
-                <Card key={forum.id} className="hover:shadow-md transition-shadow cursor-pointer">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <h4 className="font-semibold text-lg mb-2">{forum.title}</h4>
-                        <p className="text-gray-600 mb-4">{forum.description}</p>
-                        <div className="flex items-center gap-4 text-sm text-gray-500">
-                          <span>{forum.posts} publicaciones</span>
-                          <span>Último post: {new Date(forum.lastPost).toLocaleDateString("es-ES")}</span>
-                          <span>Por: {forum.lastPostAuthor}</span>
-                        </div>
-                      </div>
-                      <MessageSquare className="h-6 w-6 text-gray-400" />
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-              
-            </div>
-          </TabsContent>
-           
-           */}
-
-
         </Tabs>
-
-        
         <AddContentModal
           isOpen={isAddContentModalOpen}
           onClose={() => setIsAddContentModalOpen(false)}
@@ -691,19 +521,16 @@ export default function CourseDetailPage() {
           editingGrade={editingGrade}
         />
 
+
         <BannerModal
             isOpen={isBannerModalOpen}
             onClose={() => setIsBannerModalOpen(false)}
             onAdd={handleAddNewBanner}
             sectionId={selectedSectionId}
             sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
+          
         />
       </div>
 
-
-      /* Abrir modal del Foro
-
-
-        */
   )
 }

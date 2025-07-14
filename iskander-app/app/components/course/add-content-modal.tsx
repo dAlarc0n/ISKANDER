@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { Button } from "~/components/ui/button"
 import {
   Dialog,
@@ -15,7 +15,7 @@ import { Textarea } from "~/components/ui/textarea"
 import { Combobox } from "~/components/ui/combobox"
 import { Switch } from "~/components/ui/switch"
 import { Card, CardContent } from "~/components/ui/card"
-import { Upload, FileText, MessageSquare, Megaphone, Video, GraduationCap } from "lucide-react"
+import { Upload, FileText, MessageSquare, Megaphone, Video, GraduationCap, Trash2 } from "lucide-react"
 
 import type { CourseDetail, CourseContent, CourseGrade, CourseStudent } from "~/types/course-detail"
 
@@ -58,7 +58,6 @@ const filteredAssignmentOptions = course?.sections
       }))
   ) ?? [];
 
-
   const [selectedStaticContentId, setSelectedStaticContentId] = useState<string>(""); 
 
   const contentTypes = [
@@ -69,6 +68,73 @@ const filteredAssignmentOptions = course?.sections
     { value: "assignment", label: "Tarea", icon: FileText, description: "Actividad evaluable" },
     { value: "quiz", label: "Cuestionario", icon: GraduationCap, description: "Evaluación automática" },
   ]
+
+  
+  {/* para aumentar el cuestionario*/}
+const [seccionCuestionario, setSeccionCuestionario] = useState<Question[]>([])
+
+  type Option = {id:string; text:string;}
+  type Question = {
+    id:string
+    enu:string,
+    opcion:Option[]
+  }
+  
+
+  const contadorRef = useRef(0)
+  const generId = () => `id-${++contadorRef.current}`
+
+
+    {/* para aumentar las preguntas*/}
+  const addQuestion = () =>{
+    const newquestion: Question = {
+      id:generId(),
+      enu:'',
+      opcion:[],
+    }
+     setSeccionCuestionario(prev => [...prev, newquestion])
+  }
+
+const addOpcion = (idQuestion: string) => {
+  setSeccionCuestionario(prev =>
+    prev.map((p: Question) =>
+      p.id === idQuestion
+        ? {
+            ...p,
+            opcion: [...p.opcion, { id: generId(), text: '' }],
+          }
+        : p
+    )
+  )
+}
+
+useEffect(() => {
+  if (seccionCuestionario.length === 0) {
+    addQuestion()
+  }
+}, [])
+
+
+const deleteQuestion = (id: string) => {
+  setSeccionCuestionario(prev => prev.filter(p => p.id !== id))
+}
+
+const deleteOpcion = (idQuestion: string, idOpcion: string) => {
+  setSeccionCuestionario(prev =>
+    prev.map(p =>
+      p.id === idQuestion
+        ? {
+            ...p,
+            opcion: p.opcion.filter(o => o.id !== idOpcion),
+          }
+        : p
+    )
+  )
+}
+
+
+
+
 
   {/* la informacion es de contenido del curso (ajustar parametro)*/}
   const handleSubmit = (e: React.FormEvent) => {
@@ -233,7 +299,7 @@ const filteredAssignmentOptions = course?.sections
 
           {(formData.type === "assignment" || formData.type === "quiz") && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className=" grid grid-col md:grid-cols-2 gap-4">
                 <div className="grid gap-2">
                   <Label htmlFor="due-date">Fecha límite</Label>
                   <Input id="due-date" type="datetime-local" />
@@ -246,7 +312,111 @@ const filteredAssignmentOptions = course?.sections
             </div>
           )}
 
+          {( formData.type === "quiz") && (
 
+          <div className="space-y-2 border p-4 rounded-md shadow-md">     
+          {/* preguntas del cuestionario */}
+          {seccionCuestionario.map((question, index) => (
+            <div key={question.id} className="grid grid-cols-2 gap-4 border p-4 rounded-md shadow">
+              <div className="col-span-2">
+              <div className="grid gap-3">
+                <Label htmlFor={`cuestion-${question.id}`}>Pregunta {index + 1}</Label>
+                <Input
+                  id={`cuestion-${question.id}`}
+                  value={question.enu}
+                  onChange={(e) => {
+                    const newT = e.target.value
+                    setSeccionCuestionario(prev =>
+                      prev.map(p =>
+                        p.id === question.id ? { ...p, enu: newT } : p
+                      )
+                    )
+                  }}
+                  placeholder={`Pregunta del ${selectedType?.label.toLowerCase()}`}
+                  required
+                />
+              </div>
+              </div>
+
+              {/* Opciones */}
+              <div className="col-span-2">
+                <div className="grid gap-3 text-white">
+                {question.opcion.map((op, i) => (
+                  <div key={op.id} className="flex gap-2 items-center">
+                    <Input
+                      id={`opcion-${op.id}`}
+                      value={op.text}
+                      onChange={(e) => {
+                        const newT = e.target.value
+                        setSeccionCuestionario(prev =>
+                          prev.map(p =>
+                            p.id === question.id
+                              ? {
+                                  ...p,
+                                  opcion: p.opcion.map(o =>
+                                    o.id === op.id ? { ...o, text: newT } : o
+                                  ),
+                                }
+                              : p
+                          )
+                        )
+                      }}
+                      placeholder={`Opción ${i + 1}`}
+                      required
+                    />
+                    <Button
+                      type="button"
+                      onClick={() => deleteOpcion(question.id, op.id)}
+                      className="bg-white border border-red-600 text-red-600  hover:bg-red-300"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                
+                    </div>
+                  </div>
+
+                  {/*Boton Eliminar pregunta*/}
+                  <Button
+                    type="button"
+                    onClick={() => deleteQuestion(question.id)}
+                    className="bg-white border border-red-600 hover:bg-red-500 text-red-600 hover:text-white"
+                  >
+                    Eliminar pregunta
+                  </Button>
+
+                    {/* Agregar opción */}
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => addOpcion(question.id)}
+                      className="border-purple-600 text-purple-600 bg-purple-100 hover:bg-purple-500 hover:text-white transition-transform duration-500"
+                    >
+                      + Opción
+                    </Button>
+
+
+
+            </div>
+          ))}
+
+          {/* Agregar nueva pregunta */}
+          <div className="grid gap-2 text-white">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addQuestion}
+              className="mt-4 bg-purple-600 hover:bg-purple-700 hover:text-white transition-transform duration-500"
+            >
+              Agregar pregunta +
+            </Button>
+          </div>
+        </div>
+
+              
+
+          )}
 
           {formData.type === "assignment" && filteredAssignmentOptions.length > 0  &&(
             <div className="grid gap-2">
@@ -285,7 +455,7 @@ const filteredAssignmentOptions = course?.sections
           </div>
           )}
 
-          <DialogFooter>
+          <DialogFooter className=" grid gap-2 md:flex  grid-cols-[1fr_2fr]  ">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancelar
             </Button>

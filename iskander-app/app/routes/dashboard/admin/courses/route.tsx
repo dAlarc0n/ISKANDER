@@ -16,7 +16,7 @@ import { Label } from "~/components/ui/label"
 import { Textarea } from "~/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Plus, Search, Edit, Trash2, Users, BookOpen, ReceiptText } from "lucide-react"
-import type { Course, CreateCourseData } from "~/types/course"
+import type { Course, CreateCourseData,  CreateBannerData} from "~/types/course"
 
 import { Link,useFetcher,useLoaderData } from "@remix-run/react"
 import type { LoaderFunction } from "@remix-run/node"

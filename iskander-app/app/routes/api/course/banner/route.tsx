@@ -2,22 +2,20 @@ import type { ActionFunctionArgs } from "@remix-run/node"
 import { currentToken } from "~/services/auth.server"
 import axios from "~/services/axios.server"
 
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   const token = await currentToken({ request })
   if (!token) return null
 
+  const courseId = params.courseId
   const formData = await request.formData()
 
-  const id = formData.get("id")
-  const type = formData.get("type")
+  const payload = new FormData()
   const file = formData.get("file") as File | null
 
-  const payload = new FormData()
-  payload.append("type", type as string)
   if (file) payload.append("file", file)
 
   try {
-    const response = await axios.post(`/api/course/banner/${id}`, payload, {
+    const response = await axios.post(`/api/course/banner`, payload, {
       headers: {
         Authorization: "Bearer " + token,
       },
@@ -27,3 +25,4 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     return e.response
   }
 }
+
