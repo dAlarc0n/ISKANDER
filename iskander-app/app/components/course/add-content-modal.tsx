@@ -260,8 +260,8 @@ const deleteOpcion = (idQuestion: string, idOpcion: string) => {
                     />
                   </div>
                   {formData.file && (
-                    <div className="mt-3 p-2 bg-gray-100 rounded text-sm">
-                      <strong>Archivo seleccionado:</strong> {formData.file.name}
+                    <div className="mt-3 p-2 bg-gray-100 rounded text-sm mx-auto w-64">
+                      <strong className="">Tamño del archivo seleccionado: </strong> 
                       <br />
                       <span className="text-gray-600">Tamaño: {(formData.file.size / 1024 / 1024).toFixed(1)} MB</span>
                     </div>

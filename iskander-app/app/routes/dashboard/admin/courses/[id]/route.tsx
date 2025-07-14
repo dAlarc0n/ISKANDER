@@ -25,7 +25,8 @@ import { AddContentModal } from "~/components/course/add-content-modal"
 import { AddStudentModal } from "~/components/course/add-student-modal"
 import { GradeModal } from "~/components/course/grade-modal"
 import { BannerModal } from "~/components/course/add-banner-modal"
-import type { Course, CreateBannerData} from "~/types/course"
+import { TasksModal } from "~/components/course/tasks-modal"
+import type { Course} from "~/types/course"
 import type {LoaderFunctionArgs} from "@remix-run/node";
 import  {useFetcher, useLoaderData, useParams, Link} from "@remix-run/react";
 import {courseDetail,courseUser} from '~/services/auth.server'
@@ -62,15 +63,12 @@ export default function CourseDetailPage() {
   const [isAddContentModalOpen, setIsAddContentModalOpen] = useState(false)
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false)
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false)
-  const [editingBanner, setEditingBanner] = useState<Course | null>(null)
-  const [newBanner, setNewBanner] = useState<CreateBannerData>({ thumbnail: "" })
-
-
-
-  
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [editingBanner, setEditingBanner] = useState<Course | null>(null)  
   const [isBannerModalOpen, setIsBannerModalOpen] = useState(false)
   const [selectedSectionId, setSelectedSectionId] = useState<number>(0)
   const [editingGrade, setEditingGrade] = useState<CourseGrade | null>(null)
+
   useEffect(()=>{
     setCourse(courseDetails)
   },[courseDetails])
@@ -332,7 +330,7 @@ useEffect(() => {
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-lg">{section.title}</CardTitle>
+                      <CardTitle className="text-lg " >{section.title}</CardTitle>
                       {section.description && <CardDescription>{section.description}</CardDescription>}
                     </div>
                   </div>
@@ -342,7 +340,9 @@ useEffect(() => {
                     {section.contents.map((content) => (
                       <div
                         key={content.id}
-                        className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="cursor-pointer flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-purple-300 hover:bg-opacity-20 transition-colors"  onClick={() => {
+                          if  (content.type === "assignment") {setIsTaskModalOpen(true)}
+                        }}
                       >
                         <div className="flex items-center gap-3 flex-1">
                           <div className="flex-shrink-0">{getContentIcon(content.type)}</div>
@@ -530,7 +530,18 @@ useEffect(() => {
             sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
           
         />
-      </div>
 
+
+        <TasksModal
+         isOpen={isTaskModalOpen}
+          onClose={() => setIsTaskModalOpen(false)}
+          sectionId={selectedSectionId}
+          sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
+          course={course}
+        />
+
+
+
+      </div>
   )
 }

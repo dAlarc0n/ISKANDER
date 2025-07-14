@@ -16,7 +16,7 @@ import { Label } from "~/components/ui/label"
 import { Textarea } from "~/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "~/components/ui/select"
 import { Plus, Search, Edit, Trash2, Users, BookOpen, ReceiptText } from "lucide-react"
-import type { Course, CreateCourseData,  CreateBannerData} from "~/types/course"
+import type { Course, CreateCourseData} from "~/types/course"
 
 import { Link,useFetcher,useLoaderData } from "@remix-run/react"
 import type { LoaderFunction } from "@remix-run/node"
@@ -41,6 +41,9 @@ interface LoaderData {
   course:Course[]
   userLogIn:any
 }
+
+
+
 export const loader: LoaderFunction = async ({ request }) => {
   
   const userList = await users({request})
@@ -493,7 +496,8 @@ export default function CoursesManagement() {
               <p className="text-gray-600 mb-4">
                 {searchTerm ? "Intenta con otros términos de búsqueda" : "Comienza creando tu primer curso"}
               </p>
-              {!searchTerm && (
+                
+              {!searchTerm && userLogIn.id ===1 && (
                 <Button onClick={() => setIsCreateDialogOpen(true)} className="bg-purple-600 hover:bg-purple-700">
                   <Plus className="h-4 w-4 mr-2" />
                   Crear Primer Curso
