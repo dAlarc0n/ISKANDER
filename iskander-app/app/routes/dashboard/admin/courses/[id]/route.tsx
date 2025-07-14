@@ -668,6 +668,7 @@ export default function CourseDetailPage() {
           onAdd={handleContentAdded}
           sectionId={selectedSectionId}
           sectionTitle={course.sections.find((s) => s.id === selectedSectionId)?.title || ""}
+          course={course}
         />
 
         <AddStudentModal

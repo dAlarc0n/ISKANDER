@@ -16,7 +16,8 @@ import { Combobox } from "~/components/ui/combobox"
 import { Switch } from "~/components/ui/switch"
 import { Card, CardContent } from "~/components/ui/card"
 import { Upload, FileText, MessageSquare, Megaphone, Video, GraduationCap } from "lucide-react"
-import type { CourseContent } from "~/types/course-detail"
+
+import type { CourseDetail, CourseContent, CourseGrade, CourseStudent } from "~/types/course-detail"
 
 interface AddContentModalProps {
   isOpen: boolean
@@ -24,7 +25,7 @@ interface AddContentModalProps {
   onAdd: (content: Omit<CourseContent, "id">) => void
   sectionId: number
   sectionTitle: string
-  
+  course: CourseDetail;
 }
 
 interface ContentFormData {
@@ -36,21 +37,27 @@ interface ContentFormData {
   file?: File
 }
 
-const staticRelatedContentOptions = [
-  { value: "content1_id", label: "Introducción al Curso - Bienvenida (Anuncio)" },
-  { value: "content2_id", label: "Semana 1 - Guía de Estudio (Archivo)" },
-  { value: "content3_id", label: "Semana 2 - Debate sobre IA (Foro)" },
-  { value: "content4_id", label: "Semana 3 - Ejercicio Práctico 1 (Tarea)" },
-  { value: "content5_id", label: "Semana 4 - Cuestionario Final (Cuestionario)" },
-];
 
-export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitle }: AddContentModalProps) {
+export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitle,course }: AddContentModalProps) {
+  
+
   const [formData, setFormData] = useState<ContentFormData>({
     title: "",
     description: "",
     type: "file",
     isVisible: true,
   })
+
+const filteredAssignmentOptions = course?.sections
+  ?.flatMap((section) =>
+    section.contents
+      .filter((content) => content.type === "assignment")
+      .map((content) => ({
+        value: content.id.toString(),
+        label: `${section.title} - ${content.title}`,
+      }))
+  ) ?? [];
+
 
   const [selectedStaticContentId, setSelectedStaticContentId] = useState<string>(""); 
 
@@ -240,21 +247,22 @@ export function AddContentModal({ isOpen, onClose, onAdd, sectionId, sectionTitl
           )}
 
 
-          
 
-          {formData.type === "assignment"  &&(
+          {formData.type === "assignment" && filteredAssignmentOptions.length > 0  &&(
             <div className="grid gap-2">
               <div className="grid grid-cols-1">
                    <div className="grid gap-2">
-                     <Label htmlFor="tarea">Actividades !!!estatico</Label>
+                     <Label htmlFor="tarea">Actvidades del Curso</Label>
                      <Combobox
-                      options={staticRelatedContentOptions} 
+ 
+                      options={filteredAssignmentOptions} 
                       value={selectedStaticContentId || ""}                                  
                       onValueChange={(value: string) => {setSelectedStaticContentId(value);}}
                        placeholder="Seleccionar la actividad"
                        searchPlaceholder="Buscar Actividad ..."
                        emptyText="No se encontró la actividad."
                        className="truncate"
+                     
                      />
                    </div>
                  </div>
