@@ -150,22 +150,18 @@ export default function CourseDetailPage() {
       action: `/api/course/content`,
       encType: "multipart/form-data" 
     });
-    console.log("Imagen agregada:", content)
   }
   
 
 const handleAddNewBanner = (data: { id: number; file?: File }) => {
   if (!data.file) return 
 
-   const formData = new FormData()
+  const formData = new FormData()
   formData.append("file", data.file)
-  formData.append("id", String(data.id))
-
+  formData.append("id", id as string)
   fetcher.submit(formData, {
     method: "POST",
-
-    /*cambiar ruta */
-    action: "/api/course/edit",
+    action: "/api/course/banner",
     encType: "multipart/form-data",
   })  
   console.log("Imagen agregada:", data)
@@ -205,7 +201,7 @@ useEffect(() => {
 
         
         
-        const handleStudentsAdded = (students: CourseStudent[]) => {
+  const handleStudentsAdded = (students: CourseStudent[]) => {
     const formData = new FormData();
     formData.append("students", JSON.stringify(students));
     formData.append("id",id || '')

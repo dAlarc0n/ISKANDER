@@ -310,7 +310,7 @@ class CourseController extends Controller
                 'title'=>'Debe subir un archivo de imagen'
             ],400);
         }
-        $course->thumbnail=$path;
+        $course->thumbnail=env('APP_URL').':8000/storage/'.$path;
         $course->save();
         return response()->json([
             'title'=>'Banner actualizado correctamente',

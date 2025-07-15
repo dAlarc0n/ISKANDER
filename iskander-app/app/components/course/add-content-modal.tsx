@@ -340,7 +340,7 @@ const deleteOpcion = (idQuestion: string, idOpcion: string) => {
 
               {/* Opciones */}
               <div className="col-span-2">
-                <div className="grid gap-3 text-white">
+                <div className="grid gap-3">
                 {question.opcion.map((op, i) => (
                   <div key={op.id} className="flex gap-2 items-center">
                     <Input

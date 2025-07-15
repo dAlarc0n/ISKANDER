@@ -8,6 +8,7 @@ import { login, requireGuest } from "~/services/auth.server"
 import type { ActionFunctionArgs, MetaFunction,LoaderFunction } from "@remix-run/node"
 import { useFetcher} from "@remix-run/react"
 import { useEffect, useState } from "react"
+import Swal from "sweetalert2"
 
 export const loader: LoaderFunction = async ({ request }) => {
   await requireGuest({ request });  
@@ -18,8 +19,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData()
   const identifier = formData.get("identifier")
   const password = formData.get("password")
+  let logins = null;
   try {
-  const logins = await login({ request,identifier, password })
+  logins = await login({ request,identifier, password })
   console.log(logins)
     if (logins.redirector) {
       return logins.redirector;
@@ -30,14 +32,23 @@ export const action = async ({ request }: ActionFunctionArgs) => {
       fields: { identifier, password },
     }
   }
-  return null;
+  return logins;
 }
 export default function LoginPage() {
   const [fetching, setFetching] = useState(false)
   const fetcher = useFetcher()
   useEffect(()=>{
+    console.log(fetcher)
     if(fetcher.state==="submitting" || fetcher.state==="loading"){
       setFetching(true)
+    }else if(fetcher.state==="idle" && fetcher.data){
+      console.log(fetcher.data)
+      setFetching(false)
+      Swal.fire({
+        title: "Credenciales incorrectas",
+        icon: "error",
+        confirmButtonText: "Aceptar"
+      })
     }else{
       setFetching(false)
     }
